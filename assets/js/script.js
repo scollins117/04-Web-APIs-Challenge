@@ -3,6 +3,9 @@ var nextButton = document.getElementById("next-btn")
 var containerElement = document.getElementById("questions")
 var questionElement = document.getElementById("question")
 var answerButtonElement = document.getElementById("answer-btns")
+var currentTime = document.getElementById("time")
+var endGame = document.getElementById("game-over")
+var score = 0;
 
 var randomizedQuestions;
 var questionIndex;
@@ -15,10 +18,12 @@ nextButton.addEventListener("click", () => {
 
 function startGame() {
     console.log("started")
+    stopWatch()
     startButton.classList.add("hide")
     randomizedQuestions = questionList.sort(() => Math.random() - .5)
     questionIndex = 0
     containerElement.classList.remove("hide")
+    endGame.classList.add("hide")
     nextQuestion()
 }
 
@@ -36,7 +41,12 @@ function displayQuestion(question) {
 
         if(answer.correct) {
             button.dataset.correct = answer.correct
+            score++
+        } else {
+            score--;
+            currentTime -50;
         }
+
         button.addEventListener("click", selectAnswer)
         answerButtonElement.appendChild(button)
     })
@@ -62,6 +72,7 @@ function selectAnswer(e) {
         nextButton.classList.remove("hide")
     } else {
         console.log("end")
+        gameOver()
     }
 }
 
@@ -104,19 +115,52 @@ var questionList = [
 
         ]
     },
-    {
-        question: "What does event.preventDefault() do?",
-        answer: [
-            {text: "It stops the browser from reloading the page upon a form submission", correct: true},
-            {text: "It stops the browser from allowing the form submission event to occur", correct: false}
+    {   
+        question: "On the event object, how do you get the element that triggered the event?:",
+        answers: [
+            {text: "target.event", correct: false},
+            {text: "event.target", correct: true},
+            {text: "event.getElementById('target')", correct: false},
+            {text: "element.addClassList('target')", correct: false}
+
         ]
     },
-    {
-        question: "The browser event submit allows us to do the following",
-        answer: [
-            {text: "Submit a form using a button", correct: false},
-            {text: "Submit a form using the enter key", correct: false},
-            {text: "Submit a form using both a button and the enter key", correct: true}
+    {   
+        question: "In the DOM’s event object, what does its target property refer to?",
+        answers: [
+            {text: "It refers to the HTML element that was interacted with to dispatch the event.", correct: true},
+            {text: "It refers to the HTML element we want to affect as a result of our dispatched event.", correct: false}
+
         ]
-    }
+    },
+    {   
+        question: "If you save your array of objects to the browser’s local storage and it looks like [Object object] when you visit it in Chrome’s DevTools, what’s wrong?",
+        answers: [
+            {text: "The array wasn’t stringified with JSON.stringify() before saving it in Local Storage.", correct: true},
+            {text: "The array wasn’t parsed with JSON.parse() before saving it to Local Storage.", correct: false}
+
+        ]
+    },
 ]
+
+
+function stopWatch() {
+    currentTime = setInterval(countDown, 250);
+    var i = 250;
+    function countDown() {
+        document.getElementById("time").innerHTML = i--;
+        if(i ==0) {
+            clearInterval(currentTime);
+            console.log("end")
+            gameOver()
+
+        }
+    }
+}
+
+function gameOver() {
+  console.log("the game is over") 
+  containerElement.classList.add("hide")    
+  endGame.classList.remove("hide")
+
+}
